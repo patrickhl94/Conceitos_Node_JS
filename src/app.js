@@ -47,6 +47,8 @@ app.put("/repositories/:id", verifyId, (req, res) => {
 
   const indexRepo = repositories.findIndex(repo => repo.id === id);
 
+  if(indexRepo < 0) return res.status(400).json({erro: 'Repository not found'})
+
   const repo = {
     id,
     title,
@@ -65,9 +67,11 @@ app.delete("/repositories/:id", verifyId, (req, res) => {
 
   const indexRepo = repositories.findIndex(repo => repo.id === id);
   
+  if(indexRepo < 0) return res.status(400).json({erro: 'Repository not found'})
+
   repositories.splice(indexRepo, 1);
 
-  return res.json({});
+  return res.json({message: 'Successfully deleted repository'});
 });
 
 app.post("/repositories/:id/like", (req, res) => {
