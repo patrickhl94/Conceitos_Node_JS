@@ -10,7 +10,7 @@ app.use(cors());
 
 const repositories = [];
 
-function verifyId(req, res, next) {
+const verifyId = (req, res, next) => {
   const { id } = req.params
 
   if (!(isUuid(id))) {
@@ -47,14 +47,14 @@ app.put("/repositories/:id", verifyId, (req, res) => {
 
   const indexRepo = repositories.findIndex(repo => repo.id === id);
 
-  if(indexRepo < 0) return res.status(400).json({erro: 'Repository not found'})
+  if (indexRepo < 0) return res.status(400).json({ erro: 'Repository not found' })
 
   const repo = {
     id,
     title,
     url,
     techs,
-    like: 0
+    likes: 0
   }
 
   repositories[indexRepo] = repo;
@@ -66,16 +66,25 @@ app.delete("/repositories/:id", verifyId, (req, res) => {
   const { id } = req.params;
 
   const indexRepo = repositories.findIndex(repo => repo.id === id);
-  
-  if(indexRepo < 0) return res.status(400).json({erro: 'Repository not found'})
+
+  if (indexRepo < 0) return res.status(400).json({ erro: 'Repository not found' })
 
   repositories.splice(indexRepo, 1);
 
-  return res.json({message: 'Successfully deleted repository'});
+  return res.status(204).json({ message: 'Successfully deleted repository' });
 });
 
-app.post("/repositories/:id/like", (req, res) => {
-  return res.json({})
+app.post("/repositories/:id/like", verifyId, (req, res) => {
+  const { id } = req.params;
+
+  const indexRepo = repositories.findIndex(repo => repo.id === id);
+
+  if (indexRepo < 0) return res.status(400).json({ erro: 'Repository not found' })
+  
+
+  repositories[indexRepo].likes = ++repositories[indexRepo].likes;
+  
+  return res.json(repositories[indexRepo]);
 });
 
 module.exports = app;
