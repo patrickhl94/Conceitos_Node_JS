@@ -31,7 +31,7 @@ app.post("/repositories", (req, res) => {
     id: uuid(),
     title,
     url,
-    techs,
+    techs: techs.split(','),
     likes: 0
   }
 
@@ -80,10 +80,10 @@ app.post("/repositories/:id/like", verifyId, (req, res) => {
   const indexRepo = repositories.findIndex(repo => repo.id === id);
 
   if (indexRepo < 0) return res.status(400).json({ erro: 'Repository not found' })
-  
+
 
   repositories[indexRepo].likes = ++repositories[indexRepo].likes;
-  
+
   return res.json(repositories[indexRepo]);
 });
 
